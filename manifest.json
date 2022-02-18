@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "MangaInjector",
+    "description": "Inject hidden text into manga for popup dictionaries",
+    "version": "1.0",
+    "content_scripts": [
+        {
+            "run_at": "document_end",
+            "matches": ["http://*/*", "https://*/*"],
+            "js": ["inject.js"]
+        }
+    ],
+    "host_permissions": ["<all_urls>"]
+}
