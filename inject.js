@@ -7,8 +7,6 @@ var OPACITY = 0.7
 var FONT_SIZE = 15
 var RETRY_WAIT = 100
 
-var is_pressed = false
-
 // Temporary elements
 var element
 var new_image
@@ -45,46 +43,38 @@ function set_text() {
     })
 }
 
-document.addEventListener("mousemove", e => {
-    if (is_pressed == true) {
-        element = document.elementFromPoint(e.clientX, e.clientY)
-        if (element instanceof HTMLCanvasElement) {
-            element_rect = e.target.getBoundingClientRect()
-            parent_rect = element.parentElement.getBoundingClientRect()
+document.onmousedown = function (e) {
+    element = document.elementFromPoint(e.clientX, e.clientY)
+    if (element instanceof HTMLCanvasElement) {
+        element_rect = e.target.getBoundingClientRect()
+        parent_rect = element.parentElement.getBoundingClientRect()
 
-            // Calculate position relative to element (image)
-            image_x = e.clientX - element_rect.left
-            image_y = e.clientY - element_rect.top
+        // Calculate position relative to element (image)
+        image_x = e.clientX - element_rect.left
+        image_y = e.clientY - element_rect.top
 
-            // Calculate position relative to parent
-            parent_x = e.clientX - parent_rect.left - PADDING
-            parent_y = e.clientY - parent_rect.top - PADDING
+        // Calculate position relative to parent
+        parent_x = e.clientX - parent_rect.left - PADDING
+        parent_y = e.clientY - parent_rect.top - PADDING
 
-            // Clear old results
-            navigator.clipboard.writeText("").then()
-            temp_div.innerHTML = ""
+        // Clear old results
+        navigator.clipboard.writeText("").then()
+        temp_div.innerHTML = ""
 
-            // Copy cropped image to clipboard
-            // TODO: Potentially put into monitored folder instead (for Linux support)
-            new_image = element.getContext("2d").getImageData(image_x - PADDING, image_y - PADDING, WIDTH, HEIGHT)
-            temp_canvas.getContext("2d").putImageData(new_image, 0, 0)
-            temp_canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({"image/png": blob})]))
+        // Copy cropped image to clipboard
+        // TODO: Potentially put into monitored folder instead (for Linux support)
+        new_image = element.getContext("2d").getImageData(image_x - PADDING, image_y - PADDING, WIDTH, HEIGHT)
+        temp_canvas.getContext("2d").putImageData(new_image, 0, 0)
+        temp_canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({"image/png": blob})]))
 
-            // Set div position for new text
-            temp_div.style.left = parent_x + "px"
-            temp_div.style.top = parent_y + "px"
+        // Set div position for new text
+        temp_div.style.left = parent_x + "px"
+        temp_div.style.top = parent_y + "px"
 
-            // Add hiden text
-            set_text()
+        // Add hiden text
+        set_text()
 
-            // Reset is pressed        
-            is_pressed = false
-        }
+        // Reset is pressed        
+        is_pressed = false
     }
-})
-
-document.addEventListener("keydown", e => {
-    if (e.ctrlKey == true) {
-        is_pressed = true
-    }
-})
+}
